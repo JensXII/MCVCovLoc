@@ -1,0 +1,46 @@
+---
+title: "Installation Guide"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Installation_guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Install R-package
+
+The package demand R 3.5.0 or later.
+
+The project R package MCVCovLoc can be installed from GitHub:
+
+To do this the package devtools are needed and can be installed from cran:
+```{r eval = FALSE}
+install.packages("devtools")
+```
+
+To install the MCVCovLoc package:
+```{r eval = FALSE}
+devtools::install_github("JensXII/MCVCovLoc", build_vignettes = TRUE)
+```
+For older version of R or devtools, this does not work e.g. the vignettes users_guide and install_guide are not build. Then try:
+```{r eval = FALSE}
+devtools::install_github("JensXII/MCVCovLoc", build_opts = c("--no-resave-data", "--no-manual"))
+```
+
+If this doesn't work either, you can download the source-code and install this:
+- you may not be able to do this with Windows Explorer, but have to use Crome or another web-browser.
+
+1. <https://github.com/JensXII/MCVCovLoc>
+
+2. press 'Clone and download'
+
+3. press 'Download ZIP'
+
+4. unzip and save the downloaded to a dedicated folder
+
+5. in the folder double-click the MCVCovLoc R-project file
+
+6. run:
+```{r eval = FALSE}
+devtools::install(build_vignettes = TRUE)
+```

@@ -1,0 +1,295 @@
+---
+title: "Users Guide"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{UsersGuide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+
+Data on coverage of measles containing vaccines are extracted at
+calender dates e.g. monthly or quarterly. Thus being cross sectional
+inventories of measles contaning vaccination coverages.
+
+When more cross sectional coverage-data have been collected,
+it will be possible to follow coverage over calendar time.
+
+The structural setup is shown in figure 1 and 2, input datasets and
+variables in appendix 1 and the combined output R data in appendix 2.
+
+Figure 1. Setup
+
+![](./media/Figure1.png){width="6.0in" height="3.0in"}
+
+
+Figure 2. Structure on disk
+
+![](./media/Figure2.png){width="2.0in" height="4.0in"}
+
+## Input data
+
+Both information on population and vaccinations are needed. Why input
+data always have to consist of a set of two data-files.
+
+Valid sets of input data will be one of the following:
+
+-   Indiviudal population file + Individual vaccination file
+
+-   Indiviudal population file + Aggregated vaccination file
+
+-   Aggregated population file + Aggregated vaccination file
+
+while the combination Aggregated population file + Individual
+vaccination file will not be a valid set of input data.
+
+Data in a set of input data should be extracted simultanously or as
+close in time to one another as possible.\
+It is recommend to include date-of-extraction in the naming of the
+files.
+
+Note:
+
+-   The input data csv-files must be semicolon-separated csv-files
+
+-   Persons with year of birth \< 2005 should not be included in the
+    input data
+
+-   For NUTS, minimum NUTS0 i.e. countrycode (two characters), must be
+    included
+
+-   NUTS detailing can maximum be level 3
+
+-   If NUTS-levels more detailed that NUTS0 are used, then all NUTS must
+    be at the same level -- in both input files.
+
+## Scripts
+
+**Initially**, create a dedicated directory for this project (wdir), and a
+subdirectory in this call data. The later is where input ;-seperated
+input files must be located
+
+Example:
+
+* Project directory: S:/Data/MCVCovLoc_wdir_DK
+
+* Subdirectory: S:/Data/MCVCovLoc_wdir_DK/data
+
+### New data
+
+For each inventory/status i.e. dates where a valid set of input data are
+available execute InputData.
+
+Example, with an individual population and an individual vaccination file:
+
+```{r eval = FALSE}
+MCVCovLoc::InputData(
+  wdir = "S:/Data/MCVCovLoc_wdir_DK",
+  StatusDate = "2019-10-01",
+  IndividuelPopulationFile = "DKIndPop20191001.csv",
+  IndividuelMCVFile = "DKIndVac20191001.csv",
+  AggregatedPopulationFile = NA,
+  AggregatedMCVFile = NA,
+  AdministrativeMCVFile = NA
+)
+```
+This will create a subdirectory wdir/Status_20191010 containing
+three subdirectories:
+
+* Inputdata -- containing the inputdata used
+
+* Data -- containing the AggPop, AggVac and combined R files
+
+* Output -- containing coverage graphs on NUTS-level 0 for both doses.
+
+### Coverage graphs by Birth cohort
+
+Following the example above, to have a graph of dose 1 coverage by Birth
+cohort/year in the NUTS DK01 area:
+
+```{r eval = FALSE}
+MCVCovLoc::VacCovBd(
+  wdir = "S:/Data/MCVCovLoc_wdir_DK",
+  StatusDate = "2019-10-01",
+  NUTS = "DK01",
+  dose = 1,
+  save = TRUE
+)
+```
+which creates this graph in the directory wdir/Status_20191001/Output
+
+Do you only want to see the graph, but not store it on disk, use save = FALSE
+
+![](./media/image1.png){width="6.4in" height="3.6in"}
+
+### Coverage graphs by age of vaccination
+
+Following the example above, to have a graph of dose 1 coverage by age in
+months at vaccination in the NUTS DK01 area:
+
+```{r eval = FALSE}
+MCVCovLoc::VacCovAge(
+  wdir = "S:/Data/MCVCovLoc_wdir",
+  StatusDate = "2019-10-01",
+  NUTS = "DK",
+  dose = 1,
+  save = TRUE
+)
+```
+Which creates this graph in the directory wdir/Status_20191001/Output
+
+Do you only want to see the graph, but not store it on disk, use save = FALSE
+
+![](./media/image2.png){width="6.4in" height="3.6in"}
+
+### Coverage maps
+
+A map of the coverage in a birth-cohort may be drawn on different
+NUTS-levels.
+
+Following the example above, for birth-cohort 2005 and dose 2:
+
+```{r eval = FALSE}
+MCVCovLoc::MapCov(
+  wdir = 'S:/Data/MCVCovLoc_wdir_DK',
+  StatusDate = '2019-12-01',
+  BirthCohort = 2005,
+  NUTS = 'DK01',
+  dose = 2,
+  save = TRUE
+)
+```
+which creates this map in the directory wdir/Status_20191001/Output
+
+Do you only want to see the map, but not store it on disk, use save = FALSE
+
+![](./media/image3.png){width="6.4in" height="3.6in"}
+
+### Shiny dashboard
+
+To have a dashboard showing all your registered data:
+
+```{r eval = FALSE}
+MCVCovLoc::ShowCov(
+  wdir = "S:/Data/MCVCovLoc_wdir_DK"
+)
+```
+This will start a Shiny daskboard:
+
+![](./media/image4.png){width="6.4in" height="3.6in"}
+
+## APPENDIX 1
+
+### Inputdata
+
+Minimal means that these variables must be in the files, with the
+specified names. There may also be other variables in data e.g. gender,
+but these are not included in the coverage calculations and output.
+
+
+**Minimal individual population file**
+
++-----------------------+-----------------------+-----------------------+
+| Variable name         | Meaning               | Format                |
++=======================+=======================+=======================+
+| PersonID              | Unique person         | Character             |
+|                       | identifier that       |                       |
+|                       | allows linking the    |                       |
+|                       | individual population |                       |
+|                       | and individual        |                       |
+|                       | vaccination files     |                       |
++-----------------------+-----------------------+-----------------------+
+| NUTS                  | NUTS Id for where the | Character             |
+|                       | person had residence  |                       |
+|                       | at date of data       |                       |
+|                       | extraction            |                       |
++-----------------------+-----------------------+-----------------------+
+| BirthDate             | Date of birth         | YYYY-MM-DD            |
++-----------------------+-----------------------+-----------------------+
+
+
+**Minimal individual vaccination file**
+
++-----------------------+-----------------------+-----------------------+
+| Variable name         | Meaning               | Format                |
++=======================+=======================+=======================+
+| PersonID              | Unique person         | Character             |
+|                       | identifier that       |                       |
+|                       | allows linking the    |                       |
+|                       | individual population |                       |
+|                       | and individual        |                       |
+|                       | vaccination files     |                       |
++-----------------------+-----------------------+-----------------------+
+| VacDate               | Date of vaccination   | YYYY-MM-DD            |
++-----------------------+-----------------------+-----------------------+
+| DoseRecorded          | Dose received         | 1 -- first dose       |
+|                       |                       |                       |
+|                       |                       | 2 -- second dose      |
++-----------------------+-----------------------+-----------------------+
+
+
+**Minimal aggregated population file**
+
++-----------------------+-----------------------+-----------------------+
+| Variable name         | Meaning               | Format                |
++=======================+=======================+=======================+
+| NUTS                  | NUTS Id for where the | Character             |
+|                       | person had residence  |                       |
+|                       | at date of data       |                       |
+|                       | extraction            |                       |
++-----------------------+-----------------------+-----------------------+
+| BirthYear             | Birth cohort          | YYYY - Integer(4)     |
++-----------------------+-----------------------+-----------------------+
+| Count                 | Number of persons     | Integer               |
++-----------------------+-----------------------+-----------------------+
+
+
+**Minimal aggregated vaccination file**
+
++-----------------------+-----------------------+-----------------------+
+| Variable name         | Meaning               | Format                |
++=======================+=======================+=======================+
+| NUTS                  | NUTS Id for where the | Character            |
+|                       | person had residence  |                       |
+|                       | at date of data       |                       |
+|                       | extraction            |                       |
++-----------------------+-----------------------+-----------------------+
+| BirthYear             | Year of birth         | Integer(4)            |
++-----------------------+-----------------------+-----------------------+
+| VacAgeMonth           | Age in months, when   | Integer               |
+|                       | vaccinated            |                       |
++-----------------------+-----------------------+-----------------------+
+| DoseRecorded          | Dose received         | 1 -- first dose       |
+|                       |                       |                       |
+|                       |                       | 2 -- second dose      |
++-----------------------+-----------------------+-----------------------+
+| Count                 | Number of vaccinated  | Integer               |
+|                       | persons               |                       |
++-----------------------+-----------------------+-----------------------+
+
+## APPENDIX 2
+
+**Combined R data**
+
++-----------------------+-----------------------+-----------------------+
+| Variable name         | Meaning               | Format                |
++=======================+=======================+=======================+
+| StatusDate            | Date of inventory     | YYYY-MM-DD            |
++-----------------------+-----------------------+-----------------------+
+| NUTS                  | NUTS Id for where the | Character             |
+|                       | person had residence  |                       |
+|                       | at StatusDate         |                       |
++-----------------------+-----------------------+-----------------------+
+| BirthYear             | Year of birth         | Integer(4)            |
++-----------------------+-----------------------+-----------------------+
+| VacAgeMonth           | Age in months, when   | Integer               |
+|                       | vaccinated            |                       |
++-----------------------+-----------------------+-----------------------+
+| DoseRecorded          | Dose received         | 1 -- first dose       |
+|                       |                       |                       |
+|                       |                       | 2 -- second dose      |
++-----------------------+-----------------------+-----------------------+
+| Count                 | Number of vaccinated  | Integer               |
+|                       | persons               |                       |
++-----------------------+-----------------------+-----------------------+

@@ -1,0 +1,29 @@
+Package: MCVCovLoc
+Type: Package
+Title: Measles containing vaccine coverage
+Description: Input data are cross sectional inventories of measles containing vaccination coverage at a calendar date.
+    When more cross sectional data have been included e.g. monthy or quarterly, it is possible to follow coverage over calendat time.
+Version: 0.2.2
+Authors@R: person("Nielsen", "Jens", email = "nls@ssi.dk", role = c("aut", "cre"))
+Depends: R (>= 3.6.0)
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+Imports:
+    RODBC,
+    ggplot2,
+    rgdal,
+    sf,
+    raster,
+    tmap,
+    data.table,
+    utils,
+    shiny,
+    shinydashboard,
+    knitr,
+    qpdf,
+    rgeos
+RoxygenNote: 7.1.1
+Suggests:
+    rmarkdown
+VignetteBuilder: knitr
